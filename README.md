@@ -53,6 +53,58 @@ Or install it yourself as:
 client = Ethereum::IpcClient.new("#{ENV['HOME']}/.ethereum_testnet/geth.ipc")
 ```
 
+
+### IPC Client Methods
+* new_account
+* unlock_account
+* accounts
+* block_number
+* get_balance
+* protocol_version
+* coinbase
+* mining
+* gas_price
+* get_storage
+* storage_at
+* get_storage_at
+* get_transaction_count
+* get_block_transaction_count_by_hash
+* get_block_transaction_count_by_number
+* get_uncle_count_by_block_hash
+* get_uncle_count_by_block_number
+* get_data
+* get_code
+* sign
+* send_raw_transaction
+vsend_transaction
+* transact
+* estimate_gas
+* call
+* flush
+* get_block_by_hash
+* get_block_by_number
+* get_transaction_by_hash
+* get_transaction_by_block_number_and_index
+* get_transaction_by_block_hash_and_index
+* get_uncle_by_block_hash_and_index
+* get_uncle_by_block_number_and_index
+* get_compilers
+* compile_solidity
+* new_filter
+* new_block_filter
+* new_pending_transaction_filter
+* uninstall_filter
+* get_filter_changes
+* get_filter_logs
+* get_logs
+* hashrate
+* get_work
+* submit_work
+* resend
+* pending_transactions
+* get_transaction_receipt
+
+
 ### Solidity contract compilation and deployment
 
 ```ruby
