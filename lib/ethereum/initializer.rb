@@ -3,10 +3,18 @@ module Ethereum
   class Initializer
     attr_accessor :contracts, :file, :client
 
+    # Raised whenever there is an issue compiling the Solidity file.
+    class CompilationError < StandardError; end
+
     def initialize(file, client = Ethereum::IpcClient.new)
       @file = File.read(file)
       @client = client
       sol_output = @client.compile_solidity(@file)
+
+      if sol_output.has_key?('error')
+        raise CompilationError, sol_output['error']['message']
+      end
+
       contracts = sol_output["result"].keys
       @contracts = []
       contracts.each do |contract|
