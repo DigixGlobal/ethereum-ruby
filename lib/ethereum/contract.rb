@@ -11,7 +11,7 @@ module Ethereum
       @events = []
       @constructor_inputs = @abi.detect {|x| x["type"] == "constructor"}["inputs"] rescue nil
       @abi.select {|x| x["type"] == "function" }.each do |abifun|
-        @functions << Ethereum::Function.new(abifun) 
+        @functions << Ethereum::Function.new(abifun)
       end
       @abi.select {|x| x["type"] == "event" }.each do |abievt|
         @events << Ethereum::ContractEvent.new(abievt)
@@ -43,7 +43,7 @@ module Ethereum
             end
           end
           deploy_payload = deploy_code + deploy_arguments
-          deploytx = connection.send_transaction({from: self.sender, gas: self.gas, gasPrice: self.gas_price, data: "0x" + deploy_payload})["result"]
+          deploytx = connection.send_single({from: self.sender, gas: self.gas, gasPrice: self.gas_price, data: "0x" + deploy_payload})["result"]
           instance_variable_set("@deployment", Ethereum::Deployment.new(deploytx, connection))
         end
 
@@ -66,7 +66,7 @@ module Ethereum
         end
 
         define_method :at do |addr|
-          instance_variable_set("@address", addr) 
+          instance_variable_set("@address", addr)
           self.events.each do |event|
             event.set_address(addr)
             event.set_client(connection)
@@ -82,7 +82,7 @@ module Ethereum
         end
 
         define_method :sender do
-          instance_variable_get("@sender") || connection.coinbase["result"]
+          instance_variable_get("@sender") || connection.eth_coinbase["result"]
         end
 
         define_method :set_gas_price do |gp|
@@ -97,7 +97,7 @@ module Ethereum
           instance_variable_set("@gas", gas)
         end
 
-        define_method :gas do 
+        define_method :gas do
           instance_variable_get("@gas") || 3000000
         end
 
@@ -119,11 +119,11 @@ module Ethereum
             logs["result"].each do |result|
               inputs = evt.input_types
               outputs = inputs.zip(result["topics"][1..-1])
-              data = {blockNumber: result["blockNumber"].hex, transactionHash: result["transactionHash"], blockHash: result["blockHash"], transactionIndex: result["transactionIndex"].hex, topics: []} 
+              data = {blockNumber: result["blockNumber"].hex, transactionHash: result["transactionHash"], blockHash: result["blockHash"], transactionIndex: result["transactionIndex"].hex, topics: []}
               outputs.each do |output|
                 data[:topics] << formatter.from_payload(output)
               end
-              collection << data 
+              collection << data
             end
             return collection
           end
@@ -135,11 +135,11 @@ module Ethereum
             logs["result"].each do |result|
               inputs = evt.input_types
               outputs = inputs.zip(result["topics"][1..-1])
-              data = {blockNumber: result["blockNumber"].hex, transactionHash: result["transactionHash"], blockHash: result["blockHash"], transactionIndex: result["transactionIndex"].hex, topics: []} 
+              data = {blockNumber: result["blockNumber"].hex, transactionHash: result["transactionHash"], blockHash: result["blockHash"], transactionIndex: result["transactionIndex"].hex, topics: []}
               outputs.each do |output|
                 data[:topics] << formatter.from_payload(output)
               end
-              collection << data 
+              collection << data
             end
             return collection
           end
@@ -178,9 +178,9 @@ module Ethereum
           define_method call_function_name do |*args|
             data = self.send(call_raw_function_name, *args)
             output = data[:formatted]
-            if output.length == 1 
+            if output.length == 1
               return output[0]
-            else 
+            else
               return output
             end
           end
@@ -195,7 +195,7 @@ module Ethereum
             arg_types.zip(args).each do |arg|
               payload << formatter.to_payload(arg)
             end
-            txid = connection.send_transaction({to: self.address, from: self.sender, data: "0x" + payload.join(), gas: self.gas, gasPrice: self.gas_price})["result"]
+            txid = connection.send_single({to: self.address, from: self.sender, data: "0x" + payload.join(), gas: self.gas, gasPrice: self.gas_price})["result"]
             return Ethereum::Transaction.new(txid, self.connection, payload.join(), args)
           end
 
