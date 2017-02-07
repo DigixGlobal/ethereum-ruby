@@ -10,7 +10,7 @@ describe Ethereum do
 
   describe 'IpcClient' do
     before(:each) do
-      @client = Ethereum::IpcClient.new("#{ENV['HOME']}/EtherDev/data/geth.ipc")
+      @client = Ethereum::IpcClient.new("#{ENV['HOME']}/.ethereum/testnet/geth.ipc")
     end
 
     it 'should work' do

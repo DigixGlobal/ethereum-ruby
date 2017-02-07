@@ -3,22 +3,22 @@ require 'spec_helper'
 describe Ethereum do
 
   before(:all) do
-    @client = Ethereum::HttpClient.new("172.16.135.102", "8545")
+    @client = Ethereum::HttpClient.new("localhost", "8545")
     @formatter = Ethereum::Formatter.new
   end
 
   describe "Ethereum Version" do
     it 'has a version number' do
-      expect(Ethereum::VERSION).to eq("0.4.90")
+      expect(Ethereum::VERSION).to eq("1.5.2")
     end
   end
-  
+
   describe "Deployment" do
     it "should deploy a contract with parameters" do
       @init = Ethereum::Initializer.new("#{ENV['PWD']}/spec/fixtures/ContractWithParams.sol", @client)
       @init.build_all
       @contract_with_params = ContractWithParams.new
-      @coinbase = @contract_with_params.connection.coinbase["result"]
+      @coinbase = @contract_with_params.connection.eth_coinbase["result"]
       @contract_with_params.deploy_and_wait(60, @coinbase)
       address = @contract_with_params.call_get_setting__
       expect(address).to eq(@coinbase)
