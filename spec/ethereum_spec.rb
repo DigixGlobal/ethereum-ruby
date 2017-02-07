@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Ethereum do
 
   before(:all) do
-    @client = Ethereum::HttpClient.new("localhost", "8545")
+    @client = Ethereum::HttpClient.new("172.16.135.102", "8545")
     @formatter = Ethereum::Formatter.new
   end
 
