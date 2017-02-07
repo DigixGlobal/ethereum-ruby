@@ -43,7 +43,7 @@ module Ethereum
             end
           end
           deploy_payload = deploy_code + deploy_arguments
-          deploytx = connection.send_single({from: self.sender, gas: self.gas, gasPrice: self.gas_price, data: "0x" + deploy_payload})["result"]
+          deploytx = connection.send_single({from: self.sender, gas: self.gas, gasPrice: self.gas_price, data: "0x" + deploy_payload}.to_json)["result"]
           instance_variable_set("@deployment", Ethereum::Deployment.new(deploytx, connection))
         end
 
