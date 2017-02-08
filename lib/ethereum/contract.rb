@@ -43,7 +43,16 @@ module Ethereum
             end
           end
           deploy_payload = deploy_code + deploy_arguments
-          deploytx = connection.send_single({from: self.sender, gas: self.gas, gasPrice: self.gas_price, data: "0x" + deploy_payload}.to_json)["result"]
+          tx_payload = {
+            jsonrpc: "2.0",
+            method: "eth_sendTransaction",
+            params: [{
+              from: self.sender,
+              data: deploy_payload
+            }],
+            id: connection.get_id
+          }.to_json
+          deploytx = JSON.parse(connection.send_single(tx_payload))["result"]
           instance_variable_set("@deployment", Ethereum::Deployment.new(deploytx, connection))
         end
 
@@ -169,7 +178,7 @@ module Ethereum
             arg_types.zip(args).each do |arg|
               payload << formatter.to_payload(arg)
             end
-            raw_result = connection.call({to: self.address, from: self.sender, data: payload.join()})["result"]
+            raw_result = connection.eth_call({to: self.address, from: self.sender, data: "0x" + payload.join()})["result"]
             formatted_result = fun.outputs.collect {|x| x.type }.zip(raw_result.gsub(/^0x/,'').scan(/.{64}/))
             output = formatted_result.collect {|x| formatter.from_payload(x) }
             return {data: "0x" + payload.join(), raw: raw_result, formatted: output}
@@ -195,7 +204,7 @@ module Ethereum
             arg_types.zip(args).each do |arg|
               payload << formatter.to_payload(arg)
             end
-            txid = connection.send_single({to: self.address, from: self.sender, data: "0x" + payload.join(), gas: self.gas, gasPrice: self.gas_price})["result"]
+            txid = connection.send_single({to: self.address, from: self.sender, data: "0x" + payload.join(), gas: self.gas, gasPrice: self.gas_price}.to_json)["result"]
             return Ethereum::Transaction.new(txid, self.connection, payload.join(), args)
           end
 
