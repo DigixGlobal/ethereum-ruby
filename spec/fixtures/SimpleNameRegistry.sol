@@ -9,7 +9,7 @@ contract SimpleNameRegistry {
   bytes16 public fifth;
   bytes32 public sixth;
 
-  modifier ifowner { if (msg.sender == owner) _ }
+  modifier ifowner { if (msg.sender == owner) _; }
 
   function SimpleNameRegistry() {
     owner = msg.sender;
