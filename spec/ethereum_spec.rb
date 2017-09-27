@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Ethereum do
 
   before(:all) do
-    @client = Ethereum::HttpClient.new("172.16.135.102", "8545")
+    @client = Ethereum::HttpClient.new("loclhost", ENV['ETH_HTTP_PORT'])
     @formatter = Ethereum::Formatter.new
   end
 
@@ -12,7 +12,7 @@ describe Ethereum do
       expect(Ethereum::VERSION).to eq("0.4.90")
     end
   end
-  
+
   describe "Deployment" do
     it "should deploy a contract with parameters" do
       @init = Ethereum::Initializer.new("#{ENV['PWD']}/spec/fixtures/ContractWithParams.sol", @client)
