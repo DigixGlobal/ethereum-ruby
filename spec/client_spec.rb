@@ -3,14 +3,14 @@ require 'spec_helper'
 describe Ethereum do
   describe 'HttpClient' do
     it 'should work' do
-      client = Ethereum::HttpClient.new('localhost', '8545')
+      client = Ethereum::HttpClient.new('localhost', ENV['ETH_HTTP_PORT'])
       expect(client.eth_accounts['error']).to eq(nil)
     end
   end
 
   describe 'IpcClient' do
     before(:each) do
-      @client = Ethereum::IpcClient.new("#{ENV['HOME']}/EtherDev/data/geth.ipc")
+      @client = Ethereum::IpcClient.new(ENV['ETH_IPC_PATH'])
     end
 
     it 'should work' do
