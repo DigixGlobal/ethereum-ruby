@@ -27,7 +27,7 @@ module Ethereum
       request.body = payload
       begin
         response = http.request(request)
-      rescue EOFError, Errno::ECONNRESET, SocketError, Net::OpenTimeout, OpenSSL::SSL::SSLError => ex
+      rescue EOFError, Errno::ECONNRESET, Errno::EPIPE, SocketError, Net::OpenTimeout, OpenSSL::SSL::SSLError => ex
         raise ConnectionError.new("[#{ex.class}] #{ex.message}")
       end
       if response.class == Net::HTTPOK
