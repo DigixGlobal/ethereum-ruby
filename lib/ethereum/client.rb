@@ -19,14 +19,12 @@ module Ethereum
 
     def batch
       @batch = []
-
       yield
-      result = send_batch(@batch)
 
+      send_batch(@batch)
+      ensure
       @batch = nil
       reset_id
-
-      return result
     end
 
     def get_id
